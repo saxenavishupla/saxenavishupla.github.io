@@ -1,0 +1,5 @@
+Traffic_Segment,Size_Segment,Avg_Orders,Store_Count
+High Traffic,Large Store (>69K sqft),3927.9333333333334,15
+High Traffic,Small Store (<69K sqft),2385.3333333333335,3
+Low Traffic,Large Store (>69K sqft),2533.0,3
+Low Traffic,Small Store (<69K sqft),2219.3571428571427,14

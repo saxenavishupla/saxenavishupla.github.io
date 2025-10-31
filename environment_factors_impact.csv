@@ -1,0 +1,8 @@
+Factor,Category,Avg_Total_Orders,Avg_Orders_Per_Cart,Store_Count
+Checkout Type,SCO,3089.909090909091,223.2621212121212,22
+Checkout Type,Dedicated,2277.8,175.28400000000002,10
+Cart Positioning,At Cart Selection,2769.2380952380954,191.30674603174606,21
+Cart Positioning,Post Cart Selection,3542.1666666666665,226.74361111111114,12
+Cart Positioning,Before Cart Selection,2042.5,244.55,2
+Movement Required,Movement No,3104.4814814814813,195.11413580246915,27
+Movement Required,Movement Yes,2615.5,244.92291666666665,8

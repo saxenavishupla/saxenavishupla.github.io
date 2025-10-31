@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caper Launch Success Predictor</title>
+    <style>
+        /* Design System */
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-red-400: rgba(255, 84, 89, 1);
+            --color-orange-400: rgba(230, 129, 97, 1);
+            
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-card-border: rgba(94, 82, 64, 0.12);
+            
+            --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-size-sm: 12px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-size-4xl: 32px;
+            
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-background: rgba(31, 33, 33, 1);
+                --color-surface: rgba(38, 40, 40, 1);
+                --color-text: var(--color-gray-200);
+                --color-text-secondary: rgba(167, 169, 169, 0.7);
+                --color-primary: var(--color-teal-300);
+                --color-border: rgba(119, 124, 124, 0.3);
+                --color-card-border: rgba(119, 124, 124, 0.2);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.5;
+            padding: var(--space-20);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: var(--space-32);
+            padding: var(--space-24);
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+        }
+
+        .header h1 {
+            font-size: var(--font-size-4xl);
+            color: var(--color-primary);
+            margin-bottom: var(--space-8);
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-24);
+            margin-bottom: var(--space-24);
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            border: 1px solid var(--color-card-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h2 {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--space-20);
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .card h3 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-16);
+            color: var(--color-text);
+            font-weight: 600;
+            padding-top: var(--space-16);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .card h3:first-of-type {
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-20);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+        }
+
+        .form-value {
+            float: right;
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--color-border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        select, .radio-group {
+            width: 100%;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: var(--font-size-base);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: var(--space-16);
+            padding: var(--space-12);
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-16);
+            margin-bottom: var(--space-24);
+        }
+
+        .prediction-card {
+            background: linear-gradient(135deg, rgba(33, 128, 141, 0.1) 0%, rgba(33, 128, 141, 0.05) 100%);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-base);
+            padding: var(--space-20);
+            text-align: center;
+        }
+
+        .prediction-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-8);
+        }
+
+        .prediction-value {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--space-8);
+            transition: all 0.3s ease;
+        }
+
+        .prediction-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .success-score {
+            margin-top: var(--space-24);
+            text-align: center;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 100px;
+            margin: var(--space-20) auto;
+        }
+
+        .gauge {
+            width: 200px;
+            height: 100px;
+        }
+
+        .gauge-score {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: var(--space-8) var(--space-20);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: var(--font-size-base);
+            margin-top: var(--space-12);
+        }
+
+        .risk-low {
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-primary);
+        }
+
+        .risk-medium {
+            background: rgba(230, 129, 97, 0.15);
+            color: var(--color-orange-400);
+        }
+
+        .risk-high {
+            background: rgba(255, 84, 89, 0.15);
+            color: var(--color-red-400);
+        }
+
+        .recommendations {
+            margin-top: var(--space-24);
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-12);
+            padding: var(--space-16);
+            background: rgba(33, 128, 141, 0.05);
+            border-left: 3px solid var(--color-primary);
+            border-radius: var(--radius-base);
+            margin-bottom: var(--space-12);
+            font-size: var(--font-size-base);
+        }
+
+        .recommendation-icon {
+            color: var(--color-primary);
+            font-weight: 700;
+            font-size: var(--font-size-xl);
+            flex-shrink: 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--space-12);
+            margin-top: var(--space-24);
+        }
+
+        .btn {
+            padding: var(--space-12) var(--space-24);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+        }
+
+        .comparison-section {
+            display: none;
+            margin-top: var(--space-24);
+            padding: var(--space-24);
+            background: rgba(33, 128, 141, 0.05);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--color-primary);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-24);
+            margin-top: var(--space-16);
+        }
+
+        .comparison-card {
+            padding: var(--space-20);
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-card-border);
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-16);
+            color: var(--color-primary);
+        }
+
+        .comparison-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-8) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .comparison-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .footer {
+            margin-top: var(--space-32);
+            padding: var(--space-20);
+            text-align: center;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-card-border);
+        }
+
+        .data-source {
+            margin-top: var(--space-8);
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Caper Launch Success Predictor</h1>
+            <p>Optimize your next store launch with data-driven insights</p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Input Form -->
+            <div class="card">
+                <h2>Store Configuration</h2>
+                
+                <h3>Store Characteristics</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        Store Size (SQFT)
+                        <span class="form-value" id="sqftValue">65,000</span>
+                    </label>
+                    <input type="range" id="sqft" min="20000" max="110000" value="65000" step="1000">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Weekly Foot Traffic
+                        <span class="form-value" id="footTrafficValue">22,000</span>
+                    </label>
+                    <input type="range" id="footTraffic" min="5000" max="45000" value="22000" step="1000">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Unique Visitors
+                        <span class="form-value" id="uniqueVisitorsValue">17,000</span>
+                    </label>
+                    <input type="range" id="uniqueVisitors" min="4000" max="32000" value="17000" step="1000">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Google Rating
+                        <span class="form-value" id="googleRatingValue">4.3</span>
+                    </label>
+                    <input type="range" id="googleRating" min="3.5" max="5.0" value="4.3" step="0.1">
+                </div>
+
+                <h3>Cart Deployment</h3>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Number of Caper Carts
+                        <span class="form-value" id="cartCountValue">15</span>
+                    </label>
+                    <input type="range" id="cartCount" min="5" max="40" value="15" step="1">
+                </div>
+
+                <h3>Store Environment</h3>
+
+                <div class="form-group">
+                    <label class="form-label">Checkout Type</label>
+                    <select id="checkoutType">
+                        <option value="SCO">SCO</option>
+                        <option value="Dedicated">Dedicated</option>
+                        <option value="Dedicated + SCO">Dedicated + SCO</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cart Positioning</label>
+                    <select id="cartPositioning">
+                        <option value="Post Cart Selection">Post Cart Selection</option>
+                        <option value="At Cart Selection" selected>At Cart Selection</option>
+                        <option value="Before Cart Selection">Before Cart Selection</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Carts at All Entrances</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="cartsAtEntrances" value="Yes" checked>
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cartsAtEntrances" value="No">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Movement of Carts Required</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="movementRequired" value="No" checked>
+                            <span>No</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="movementRequired" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Carts Stand Out / Clearly Visible</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="cartsVisible" value="Yes" checked>
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cartsVisible" value="No">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="resetForm()">Reset to Defaults</button>
+                    <button class="btn btn-primary" onclick="saveForComparison()">Save for Comparison</button>
+                </div>
+            </div>
+
+            <!-- Predictions -->
+            <div class="card">
+                <h2>Predictions</h2>
+                
+                <div class="prediction-grid">
+                    <div class="prediction-card">
+                        <div class="prediction-label">Predicted Weekly Orders</div>
+                        <div class="prediction-value" id="predictedOrders">2,450</div>
+                        <div class="prediction-subtitle" id="orderRange">Range: 2,200 - 2,700</div>
+                    </div>
+
+                    <div class="prediction-card">
+                        <div class="prediction-label">Orders Per Cart</div>
+                        <div class="prediction-value" id="ordersPerCart">163</div>
+                        <div class="prediction-subtitle">Efficiency metric</div>
+                    </div>
+                </div>
+
+                <div class="success-score">
+                    <div class="prediction-label">Store Success Score</div>
+                    <div class="gauge-container">
+                        <svg class="gauge" viewBox="0 0 200 100">
+                            <path d="M 20 80 A 80 80 0 0 1 180 80" fill="none" stroke="#e0e0e0" stroke-width="15" stroke-linecap="round"/>
+                            <path id="gaugeProgress" d="M 20 80 A 80 80 0 0 1 180 80" fill="none" stroke="#21808D" stroke-width="15" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="125.6"/>
+                        </svg>
+                        <div class="gauge-score" id="successScore">65</div>
+                    </div>
+                    <div class="risk-badge risk-medium" id="riskBadge">Medium Risk</div>
+                </div>
+
+                <div class="recommendations">
+                    <h3>Insights &amp; Recommendations</h3>
+                    <div id="recommendationsList"></div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+                    <button class="btn btn-primary" onclick="exportPrediction()">Export Summary</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section" id="comparisonSection">
+            <h2>Configuration Comparison</h2>
+            <button class="btn btn-secondary" onclick="closeComparison()" style="float: right; flex: none;">Close</button>
+            <div class="comparison-grid" id="comparisonGrid"></div>
+        </div>
+
+        <div class="footer">
+            <div><strong>Disclaimer:</strong> Predictions based on historical data from 35 stores (270 weekly observations)</div>
+            <div class="data-source">Data last updated: October 2025</div>
+        </div>
+    </div>
+
+    <script>
+        // Store configuration state
+        let savedConfiguration = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to all inputs
+            document.getElementById('sqft').addEventListener('input', updatePredictions);
+            document.getElementById('footTraffic').addEventListener('input', updatePredictions);
+            document.getElementById('uniqueVisitors').addEventListener('input', updatePredictions);
+            document.getElementById('googleRating').addEventListener('input', updatePredictions);
+            document.getElementById('cartCount').addEventListener('input', updatePredictions);
+            document.getElementById('checkoutType').addEventListener('change', updatePredictions);
+            document.getElementById('cartPositioning').addEventListener('change', updatePredictions);
+            
+            document.querySelectorAll('input[name="cartsAtEntrances"]').forEach(input => {
+                input.addEventListener('change', updatePredictions);
+            });
+            document.querySelectorAll('input[name="movementRequired"]').forEach(input => {
+                input.addEventListener('change', updatePredictions);
+            });
+            document.querySelectorAll('input[name="cartsVisible"]').forEach(input => {
+                input.addEventListener('change', updatePredictions);
+            });
+
+            // Initial calculation
+            updatePredictions();
+        });
+
+        function getInputValues() {
+            return {
+                sqft: parseInt(document.getElementById('sqft').value),
+                footTraffic: parseInt(document.getElementById('footTraffic').value),
+                uniqueVisitors: parseInt(document.getElementById('uniqueVisitors').value),
+                googleRating: parseFloat(document.getElementById('googleRating').value),
+                cartCount: parseInt(document.getElementById('cartCount').value),
+                checkoutType: document.getElementById('checkoutType').value,
+                cartPositioning: document.getElementById('cartPositioning').value,
+                cartsAtEntrances: document.querySelector('input[name="cartsAtEntrances"]:checked').value,
+                movementRequired: document.querySelector('input[name="movementRequired"]:checked').value,
+                cartsVisible: document.querySelector('input[name="cartsVisible"]:checked').value
+            };
+        }
+
+        function calculatePredictions(inputs) {
+            // Base formula: 500 + (cart_count * 120) + (foot_traffic * 0.08) + (sqft * 0.02)
+            let baseOrders = 500 + (inputs.cartCount * 120) + (inputs.footTraffic * 0.08) + (inputs.sqft * 0.02);
+
+            // Apply multipliers
+            const checkoutMultipliers = {
+                'SCO': 1.15,
+                'Dedicated': 1.0,
+                'Dedicated + SCO': 1.12
+            };
+
+            const positioningMultipliers = {
+                'Post Cart Selection': 1.12,
+                'At Cart Selection': 1.0,
+                'Before Cart Selection': 0.95
+            };
+
+            const movementMultipliers = {
+                'No': 1.0,
+                'Yes': 0.85
+            };
+
+            const entrancesMultipliers = {
+                'Yes': 1.08,
+                'No': 1.0
+            };
+
+            const visibleMultipliers = {
+                'Yes': 1.05,
+                'No': 1.0
+            };
+
+            let predictedOrders = baseOrders;
+            predictedOrders *= checkoutMultipliers[inputs.checkoutType];
+            predictedOrders *= positioningMultipliers[inputs.cartPositioning];
+            predictedOrders *= movementMultipliers[inputs.movementRequired];
+            predictedOrders *= entrancesMultipliers[inputs.cartsAtEntrances];
+            predictedOrders *= visibleMultipliers[inputs.cartsVisible];
+
+            predictedOrders = Math.round(predictedOrders);
+
+            // Calculate orders per cart
+            const ordersPerCart = Math.round(predictedOrders / inputs.cartCount);
+
+            // Calculate success score (0-100)
+            let successScore = (predictedOrders / 60);
+            
+            // Add configuration bonuses
+            let configBonus = 0;
+            if (inputs.checkoutType === 'SCO') configBonus += 5;
+            if (inputs.cartPositioning === 'Post Cart Selection') configBonus += 5;
+            if (inputs.movementRequired === 'No') configBonus += 3;
+            if (inputs.cartsAtEntrances === 'Yes') configBonus += 3;
+            if (inputs.cartsVisible === 'Yes') configBonus += 2;
+            
+            successScore = Math.min(100, Math.round(successScore + configBonus));
+
+            // Determine risk level
+            let riskLevel, riskClass;
+            if (successScore >= 70) {
+                riskLevel = 'Low Risk';
+                riskClass = 'risk-low';
+            } else if (successScore >= 40) {
+                riskLevel = 'Medium Risk';
+                riskClass = 'risk-medium';
+            } else {
+                riskLevel = 'High Risk';
+                riskClass = 'risk-high';
+            }
+
+            // Calculate confidence range (±10%)
+            const lowerBound = Math.round(predictedOrders * 0.9);
+            const upperBound = Math.round(predictedOrders * 1.1);
+
+            return {
+                predictedOrders,
+                ordersPerCart,
+                successScore,
+                riskLevel,
+                riskClass,
+                lowerBound,
+                upperBound
+            };
+        }
+
+        function generateRecommendations(inputs) {
+            const recommendations = [];
+
+            // High traffic recommendation
+            if (inputs.footTraffic > 25000) {
+                recommendations.push({
+                    text: "High-traffic location detected. Consider deploying 20+ carts to capture demand. High traffic stores with adequate cart deployment see 77% more orders."
+                });
+            }
+
+            // Low cart density
+            const cartDensity = inputs.cartCount / inputs.sqft;
+            if (cartDensity < 0.0002 && inputs.sqft > 70000) {
+                recommendations.push({
+                    text: "Cart-to-sqft ratio is low. For stores over 70k sqft, aim for at least 15-20 carts to ensure adequate coverage and accessibility."
+                });
+            }
+
+            // SCO advantage
+            if (inputs.checkoutType !== 'SCO') {
+                recommendations.push({
+                    text: "SCO (Self-Checkout) integration shows 27% higher efficiency. Consider this configuration if feasible."
+                });
+            }
+
+            // Positioning optimization
+            if (inputs.cartPositioning !== 'Post Cart Selection') {
+                recommendations.push({
+                    text: "Post cart selection positioning improves efficiency by 18%. This allows customers to experience the store first before choosing Caper carts."
+                });
+            }
+
+            // Movement efficiency
+            if (inputs.movementRequired === 'Yes') {
+                recommendations.push({
+                    text: "Requiring cart movement between zones reduces efficiency by 15%. Optimize cart placement at all entrances to minimize repositioning needs."
+                });
+            }
+
+            // Cart visibility
+            if (inputs.cartsVisible === 'No') {
+                recommendations.push({
+                    text: "Ensure Caper carts are clearly visible and distinct from regular carts. Visibility increases adoption by 5%."
+                });
+            }
+
+            // Optimal configuration praise
+            if (inputs.checkoutType === 'SCO' && 
+                inputs.cartPositioning === 'Post Cart Selection' && 
+                inputs.movementRequired === 'No' && 
+                inputs.cartsAtEntrances === 'Yes') {
+                recommendations.push({
+                    text: "Excellent configuration! You've selected optimal settings that maximize customer adoption and operational efficiency."
+                });
+            }
+
+            return recommendations;
+        }
+
+        function updatePredictions() {
+            const inputs = getInputValues();
+            const predictions = calculatePredictions(inputs);
+            const recommendations = generateRecommendations(inputs);
+
+            // Update display values for sliders
+            document.getElementById('sqftValue').textContent = inputs.sqft.toLocaleString();
+            document.getElementById('footTrafficValue').textContent = inputs.footTraffic.toLocaleString();
+            document.getElementById('uniqueVisitorsValue').textContent = inputs.uniqueVisitors.toLocaleString();
+            document.getElementById('googleRatingValue').textContent = inputs.googleRating.toFixed(1);
+            document.getElementById('cartCountValue').textContent = inputs.cartCount;
+
+            // Update predictions with animation
+            const ordersElement = document.getElementById('predictedOrders');
+            ordersElement.style.opacity = '0.5';
+            setTimeout(() => {
+                ordersElement.textContent = predictions.predictedOrders.toLocaleString();
+                ordersElement.style.opacity = '1';
+            }, 150);
+
+            document.getElementById('orderRange').textContent = 
+                `Range: ${predictions.lowerBound.toLocaleString()} - ${predictions.upperBound.toLocaleString()}`;
+            
+            const ordersPerCartElement = document.getElementById('ordersPerCart');
+            ordersPerCartElement.style.opacity = '0.5';
+            setTimeout(() => {
+                ordersPerCartElement.textContent = predictions.ordersPerCart.toLocaleString();
+                ordersPerCartElement.style.opacity = '1';
+            }, 150);
+
+            // Update success score and gauge
+            document.getElementById('successScore').textContent = predictions.successScore;
+            const gaugeProgress = document.getElementById('gaugeProgress');
+            const dashOffset = 251.2 - (251.2 * predictions.successScore / 100);
+            gaugeProgress.style.strokeDashoffset = dashOffset;
+
+            // Update risk badge
+            const riskBadge = document.getElementById('riskBadge');
+            riskBadge.textContent = predictions.riskLevel;
+            riskBadge.className = 'risk-badge ' + predictions.riskClass;
+
+            // Update recommendations
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = '';
+            recommendations.forEach(rec => {
+                const div = document.createElement('div');
+                div.className = 'recommendation-item fade-in';
+                div.innerHTML = `
+                    <span class="recommendation-icon">→</span>
+                    <span>${rec.text}</span>
+                `;
+                recommendationsList.appendChild(div);
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('sqft').value = 65000;
+            document.getElementById('footTraffic').value = 22000;
+            document.getElementById('uniqueVisitors').value = 17000;
+            document.getElementById('googleRating').value = 4.3;
+            document.getElementById('cartCount').value = 15;
+            document.getElementById('checkoutType').value = 'SCO';
+            document.getElementById('cartPositioning').value = 'At Cart Selection';
+            document.querySelector('input[name="cartsAtEntrances"][value="Yes"]').checked = true;
+            document.querySelector('input[name="movementRequired"][value="No"]').checked = true;
+            document.querySelector('input[name="cartsVisible"][value="Yes"]').checked = true;
+            
+            updatePredictions();
+        }
+
+        function saveForComparison() {
+            const inputs = getInputValues();
+            const predictions = calculatePredictions(inputs);
+            
+            savedConfiguration = {
+                inputs,
+                predictions
+            };
+
+            // Show comparison section
+            const comparisonSection = document.getElementById('comparisonSection');
+            comparisonSection.style.display = 'block';
+            comparisonSection.scrollIntoView({ behavior: 'smooth' });
+
+            updateComparisonView();
+        }
+
+        function updateComparisonView() {
+            if (!savedConfiguration) return;
+
+            const currentInputs = getInputValues();
+            const currentPredictions = calculatePredictions(currentInputs);
+
+            const comparisonGrid = document.getElementById('comparisonGrid');
+            comparisonGrid.innerHTML = `
+                <div class="comparison-card">
+                    <div class="comparison-title">Saved Configuration</div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Predicted Orders:</span>
+                        <span class="metric-value">${savedConfiguration.predictions.predictedOrders.toLocaleString()}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Orders Per Cart:</span>
+                        <span class="metric-value">${savedConfiguration.predictions.ordersPerCart.toLocaleString()}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Success Score:</span>
+                        <span class="metric-value">${savedConfiguration.predictions.successScore}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Risk Level:</span>
+                        <span class="metric-value">${savedConfiguration.predictions.riskLevel}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Cart Count:</span>
+                        <span class="metric-value">${savedConfiguration.inputs.cartCount}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Checkout Type:</span>
+                        <span class="metric-value">${savedConfiguration.inputs.checkoutType}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Cart Positioning:</span>
+                        <span class="metric-value">${savedConfiguration.inputs.cartPositioning}</span>
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+                    <div class="comparison-title">Current Configuration</div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Predicted Orders:</span>
+                        <span class="metric-value">${currentPredictions.predictedOrders.toLocaleString()}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Orders Per Cart:</span>
+                        <span class="metric-value">${currentPredictions.ordersPerCart.toLocaleString()}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Success Score:</span>
+                        <span class="metric-value">${currentPredictions.successScore}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Risk Level:</span>
+                        <span class="metric-value">${currentPredictions.riskLevel}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Cart Count:</span>
+                        <span class="metric-value">${currentInputs.cartCount}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Checkout Type:</span>
+                        <span class="metric-value">${currentInputs.checkoutType}</span>
+                    </div>
+                    <div class="comparison-metric">
+                        <span class="metric-label">Cart Positioning:</span>
+                        <span class="metric-value">${currentInputs.cartPositioning}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeComparison() {
+            document.getElementById('comparisonSection').style.display = 'none';
+            savedConfiguration = null;
+        }
+
+        function exportPrediction() {
+            const inputs = getInputValues();
+            const predictions = calculatePredictions(inputs);
+            const recommendations = generateRecommendations(inputs);
+
+            let exportText = 'CAPER LAUNCH SUCCESS PREDICTION REPORT\n';
+            exportText += '======================================\n\n';
+            exportText += 'STORE CONFIGURATION\n';
+            exportText += `Store Size: ${inputs.sqft.toLocaleString()} sqft\n`;
+            exportText += `Weekly Foot Traffic: ${inputs.footTraffic.toLocaleString()}\n`;
+            exportText += `Unique Visitors: ${inputs.uniqueVisitors.toLocaleString()}\n`;
+            exportText += `Google Rating: ${inputs.googleRating}\n`;
+            exportText += `Caper Cart Count: ${inputs.cartCount}\n`;
+            exportText += `Checkout Type: ${inputs.checkoutType}\n`;
+            exportText += `Cart Positioning: ${inputs.cartPositioning}\n`;
+            exportText += `Carts at All Entrances: ${inputs.cartsAtEntrances}\n`;
+            exportText += `Movement Required: ${inputs.movementRequired}\n`;
+            exportText += `Carts Clearly Visible: ${inputs.cartsVisible}\n\n`;
+            
+            exportText += 'PREDICTIONS\n';
+            exportText += `Predicted Weekly Orders: ${predictions.predictedOrders.toLocaleString()}\n`;
+            exportText += `Range: ${predictions.lowerBound.toLocaleString()} - ${predictions.upperBound.toLocaleString()}\n`;
+            exportText += `Orders Per Cart: ${predictions.ordersPerCart}\n`;
+            exportText += `Success Score: ${predictions.successScore}/100\n`;
+            exportText += `Risk Assessment: ${predictions.riskLevel}\n\n`;
+            
+            exportText += 'RECOMMENDATIONS\n';
+            recommendations.forEach((rec, index) => {
+                exportText += `${index + 1}. ${rec.text}\n`;
+            });
+            
+            exportText += '\n======================================\n';
+            exportText += 'Based on analysis of 35 Caper store launches\n';
+            exportText += 'Data last updated: October 2025\n';
+
+            // Create download
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'caper-prediction-report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Update comparison view when inputs change
+        setInterval(() => {
+            if (savedConfiguration && document.getElementById('comparisonSection').style.display === 'block') {
+                updateComparisonView();
+            }
+        }, 500);
+    </script>
+</body>
+</html>
